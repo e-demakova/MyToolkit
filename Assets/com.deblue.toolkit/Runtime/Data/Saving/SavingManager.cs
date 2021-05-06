@@ -8,13 +8,14 @@ namespace Deblue.Data
 {
     public sealed class SavingManager
     {
-        public static Encoding DefoultEncoding => Encoding.UTF8;
+        public static Encoding DefoultEncoding => Encoding.GetEncoding(1251);
 
         public static string LoadStreamingAsset(string fileName)
         {
             CheckIsEmpty(fileName);
+            string filePath;
 
-            var filePath = Path.Combine(Application.dataPath, fileName);
+            filePath = Application.dataPath + "/StreamingAssets/" + fileName;
 
             CheckIsExist(filePath);
 
@@ -35,7 +36,7 @@ namespace Deblue.Data
 
         public static void Save<T>(string fileName, T obj)
         {
-            var filePath = GetFilePath(fileName, false);
+            var filePath = GetPersistentFilePath(fileName, false);
             using (Stream stream = File.Create(filePath))
             {
                 using (StreamWriter writer = new StreamWriter(stream, DefoultEncoding))
@@ -45,16 +46,12 @@ namespace Deblue.Data
             }
         }
 
-        public static T Load<T>(string fileName)
+        public static T LoadJSON<T>(string filePath, T defoultValue = default(T))
         {
-            return Load<T>(fileName, default(T));
-        }
+            CheckIsEmpty(filePath);
+            CheckIsExist(filePath);
 
-        public static T Load<T>(string fileName, T defoultValue)
-        {
             T result;
-
-            var filePath = GetFilePath(fileName, true);
             using (Stream stream = File.OpenRead(filePath))
             {
                 using (StreamReader reader = new StreamReader(stream, DefoultEncoding))
@@ -67,6 +64,12 @@ namespace Deblue.Data
                 }
             }
             return result;
+        }
+
+        public static T LoadPersistentJSON<T>(string fileName, T defoultValue = default(T))
+        {
+            var filePath = GetPersistentFilePath(fileName, true);
+            return LoadJSON(filePath, defoultValue);
         }
 
         private static void CheckIsEmpty(string fileName)
@@ -85,7 +88,7 @@ namespace Deblue.Data
             }
         }
 
-        private static string GetFilePath(string fileName, bool checkExisting)
+        private static string GetPersistentFilePath(string fileName, bool checkExisting)
         {
             CheckIsEmpty(fileName);
             var filePath = string.Format("{0}/{1}", Application.persistentDataPath, fileName);

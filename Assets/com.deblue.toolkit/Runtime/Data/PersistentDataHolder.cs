@@ -15,7 +15,7 @@
 
         protected T LoadData()
         {
-            _data = SavingManager.Load(_fileName, default(T));
+            _data = SavingManager.LoadPersistentJSON(_fileName, default(T));
             return _data;
         }
     }

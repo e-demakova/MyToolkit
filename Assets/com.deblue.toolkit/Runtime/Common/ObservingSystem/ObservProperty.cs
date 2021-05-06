@@ -22,8 +22,8 @@ namespace Deblue.ObservingSystem
     {
         T Value { get; }
 
-        IObserver SubscribeOnChanging(Action<Limited_Property_Changed<T>> action, List<IObserver> observers = null);
-        void UnsubscribeOnChanging(Action<Limited_Property_Changed<T>> action);
+        IObserver SubscribeOnChanging(Action<Property_Changed<T>> action, List<IObserver> observers = null);
+        void UnsubscribeOnChanging(Action<Property_Changed<T>> action);
     }
 
     public abstract class BaseObservProperty<T> : EventSender, IDisposable where T : IComparable, IComparable<T>, IEquatable<T>
@@ -84,12 +84,12 @@ namespace Deblue.ObservingSystem
             }
         }
 
-        public IObserver SubscribeOnChanging(Action<Limited_Property_Changed<T>> action, List<IObserver> observers = null)
+        public IObserver SubscribeOnChanging(Action<Property_Changed<T>> action, List<IObserver> observers = null)
         {
             return Subscribe(action, observers);
         }
 
-        public void UnsubscribeOnChanging(Action<Limited_Property_Changed<T>> action)
+        public void UnsubscribeOnChanging(Action<Property_Changed<T>> action)
         {
             Unsubscribe(action);
         }

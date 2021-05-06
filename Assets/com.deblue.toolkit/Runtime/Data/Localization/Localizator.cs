@@ -19,7 +19,7 @@ namespace Deblue.Localization
         public Language(SystemLanguage language)
         {
             LanguageType = language;
-            FileName = "Localization_" + Enum.GetName(typeof(SystemLanguage), language);
+            FileName = Application.dataPath + "/Configs/Localization/" + Enum.GetName(typeof(SystemLanguage), language) + ".json";
         }
     }
 
@@ -33,16 +33,16 @@ namespace Deblue.Localization
         }
     }
 
-    public class Localizator
+    public static class Localizator
     {
         public static Handler<Language_Change> LanguageChange;
 
-        [HideInInspector] public static SystemLanguage DefaultLanguage = SystemLanguage.English;
+        [HideInInspector] public static SystemLanguage DefaultLanguage = SystemLanguage.Russian;
         [HideInInspector] public static Language Language;
 
         private static Dictionary<string, string> _locale = new Dictionary<string, string>(50);
 
-        public void Init()
+        public static void Init()
         {
             LoadLanguage();
             LoadTextData();
@@ -79,9 +79,8 @@ namespace Deblue.Localization
             var fileName = Language.FileName;
             _locale.Clear();
 
-            var dataJson = SavingManager.LoadStreamingAsset(fileName);
-            var data = JsonUtility.FromJson<TextItem[]>(dataJson);
-
+            var data = SavingManager.LoadJSON<TextItems>(fileName).Items;
+            
             for (int i = 0; i < data.Length; i++)
             {
                 _locale.Add(data[i].Id, data[i].Text);

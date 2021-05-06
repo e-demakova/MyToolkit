@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System;
 
 using UnityEngine;
@@ -47,49 +48,49 @@ namespace Deblue.InputSystem
         }
 
         #region Subscribing
-        public void Subscribe<T>(Action<T> action) where T : struct
+        public void Subscribe<T>(Action<T> action, List<IObserver> observers = null) where T : struct
         {
             var actionOnDown = action as Action<On_Button_Down>;
             if (actionOnDown != null)
             {
-                SubscribeOnButtonDown(actionOnDown);
+                SubscribeOnButtonDown(actionOnDown, observers);
                 return;
             }
 
             var actionOnButton = action as Action<On_Button>;
             if (actionOnButton != null)
             {
-                SubscribeOnButton(actionOnButton);
+                SubscribeOnButton(actionOnButton, observers);
                 return;
             }
 
             var actionOnUp = action as Action<On_Button_Up>;
             if (actionOnUp != null)
             {
-                SubscribeOnButtonUp(actionOnUp);
+                SubscribeOnButtonUp(actionOnUp, observers);
                 return;
             }
 
             ThrowUnexpectedTypeException(typeof(T));
         }
 
-        public void SubscribeOnButtonDown(Action<On_Button_Down> action)
+        public void SubscribeOnButtonDown(Action<On_Button_Down> action, List<IObserver> observers = null)
         {
-            _onButtonDown.Subscribe(action);
+            _onButtonDown.Subscribe(action, observers);
         }
 
-        public void SubscribeOnButton(Action<On_Button> action)
+        public void SubscribeOnButton(Action<On_Button> action, List<IObserver> observers = null)
         {
-            _onButton.Subscribe(action);
+            _onButton.Subscribe(action, observers);
         }
 
-        public void SubscribeOnButtonUp(Action<On_Button_Up> action)
+        public void SubscribeOnButtonUp(Action<On_Button_Up> action, List<IObserver> observers = null)
         {
-            _onButtonUp.Subscribe(action);
+            _onButtonUp.Subscribe(action, observers);
         }
         #endregion
 
-        #region Unubscribing
+        #region Unsubscribing
         public void UnsubscribeAll()
         {
             _onButtonDown.Clear();

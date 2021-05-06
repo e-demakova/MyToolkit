@@ -22,21 +22,25 @@ namespace Deblue.DialogSystem
 
     public readonly struct Dialog_Start
     {
-        public readonly DialogSO Dialog;
+        public readonly DialogSO  Dialog;
+        public readonly Character Character;
 
-        public Dialog_Start(DialogSO dialog)
+        public Dialog_Start(DialogSO dialog, Character character)
         {
             Dialog = dialog;
+            Character = character;
         }
     }
     
     public readonly struct Dialog_End
     {
-        public readonly DialogSO Dialog;
+        public readonly DialogSO  Dialog;
+        public readonly Character Character;
 
-        public Dialog_End(DialogSO dialog)
+        public Dialog_End(DialogSO dialog, Character character)
         {
             Dialog = dialog;
+            Character = character;
         }
     }
     

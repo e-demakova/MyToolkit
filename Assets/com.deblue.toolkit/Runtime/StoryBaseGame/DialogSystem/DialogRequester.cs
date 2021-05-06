@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Deblue.ObservingSystem;
+using Deblue.InputSystem;
+using Deblue.GameProcess;
 
 namespace Deblue.DialogSystem
 {
@@ -11,31 +13,40 @@ namespace Deblue.DialogSystem
     {
         public string   CharacterId;
         public DialogSO Dialog;
-        public bool     IsTalcked;
+        public bool     IsImportant;
+
+        [System.NonSerialized] public bool IsTalcked;
     }
 
     public class DialogRequester
     {
-        private DialogSwitcher _switcher;
-        private Character[] _charactersInScene;
-        private AvalibleCharacterOnStep[] _avalibleCharacters;
+        private DialogSwitcher                        _switcher;
+        private ObservDictionary<Character, DialogSO> _dialogues = new ObservDictionary<Character, DialogSO>();
+        private Character                             _currentCharacter;
+        private AvalibleCharacterOnStep[]             _avalibleCharacters;
+        private Character[]                           _charactersInScene;
+        private List<IObserver>                       _observCharacters = new List<IObserver>(5);
+        private List<IObserver>                       _observers = new List<IObserver>(5);
 
-        private ObservDictionary<Character, DialogSO> _dialogues;
-        private List<IObserver> _observCharacters = new List<IObserver>(5);
+        private bool _isPaused;
 
         public DialogRequester(DialogSwitcher switcher)
         {
             _switcher = switcher;
+            InputReciver.SubscribeOnInput<On_Button_Down>(RequestDialog, KeyCode.E, _observers);
+            GameTime.SubscribeOnPause(context => _isPaused = context.IsPaused, _observers);
         }
 
         public void DeInit()
         {
-            UnsubscribeOnCharacters();
+            Unsubscribe(_observCharacters);
+            Unsubscribe(_observers);
         }
 
         public void SetAvalibleDialogues(AvalibleCharacterOnStep[] avalibleCharacters)
         {
             _avalibleCharacters = avalibleCharacters;
+            UpdateCharactersOnNewScene();
             UpdateAvalibleCharacters();
         }
 
@@ -49,37 +60,51 @@ namespace Deblue.DialogSystem
                 {
                     continue;
                 }
-                for (int j = 0;  j < _charactersInScene.Length;  j++)
+                for (int j = 0; j < _charactersInScene.Length; j++)
                 {
                     var characterInScene = _charactersInScene[j];
                     if (character.CharacterId == characterInScene.CharacterId)
                     {
                         _dialogues.Add(characterInScene, character.Dialog);
-                        characterInScene.PlayerTryTalk.Subscribe(RequestDialog, _observCharacters);
+                        characterInScene.PlayerTalk.Subscribe(SetCharacter, _observCharacters);
+                        characterInScene.PlayerExit.Subscribe(context => _currentCharacter = null, _observCharacters);
                         break;
                     }
                 }
             }
         }
 
-        private void RequestDialog(Player_Try_Talk coontext)
+        private void RequestDialog(On_Button_Down context)
         {
+            if(_currentCharacter == null)
+            {
+                return;
+            }
+            if (_dialogues.TryGetValue(_currentCharacter, out var dialog) && !_isPaused)
+            {
+                _switcher.StartDialog(dialog, _currentCharacter);
+            }
+        }
 
+        private void SetCharacter(Player_Near_On_Character context)
+        {
+            _currentCharacter = context.Character;
         }
 
         private void UpdateCharactersOnNewScene()
         {
-            UnsubscribeOnCharacters();
             _charactersInScene = Object.FindObjectsOfType<Character>();
+            Unsubscribe(_observCharacters);
             UpdateAvalibleCharacters();
         }
 
-        private void UnsubscribeOnCharacters()
+        private void Unsubscribe(List<IObserver> list)
         {
-            for (int i = 0; i < _observCharacters.Count; i++)
+            for (int i = 0; i < list.Count; i++)
             {
-                _observCharacters[i].Dispose();
+                list[i].Dispose();
             }
+            list.Clear();
         }
     }
 }

@@ -4,20 +4,20 @@ using UnityEngine;
 
 namespace Deblue.DialogSystem
 {
-    [CreateAssetMenu(fileName = "New_Dialog", menuName = "Dialog system/Dialog")]
+    [CreateAssetMenu(fileName = "New_Dialog", menuName = "Dialogs/Dialog")]
     public class DialogSO : ScriptableObject
     {
-        public Choice[] Choices = default;
+        public Choice[] Choices;
 
+        [SerializeField] private string          _choiceTextId;
         [SerializeField] private Replica[]       _elements;
-        [SerializeField] private string          _characterId;
         [SerializeField] private DialogStartType _startType;
 
         [NonSerialized] private int _elementIndex = -1;
 
         public DialogStartType StartType => _startType;
-        public string CharacterId => _characterId;
         public bool IsHaveChoices => Choices?.Length > 0;
+        public string ChoiceTextId => _choiceTextId;
 
         public void Init()
         {

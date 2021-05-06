@@ -4,8 +4,11 @@ using UnityEngine;
 
 namespace Deblue.DialogSystem
 {
-    [CreateAssetMenu(fileName = "CharactersData", menuName = "Dialog system/Characters")]
-    public class CharactersDataSO : ScriptableObject, ISerializationCallbackReceiver
+    [CreateAssetMenu(fileName = "CharactersData", menuName = "Story/Characters")]
+    public class CharactersDataSO : ScriptableObject
+#if !UNITY_EDITOR
+        ,ISerializationCallbackReceiver
+#endif
     {
         [System.Serializable]
         public struct Character
@@ -19,6 +22,17 @@ namespace Deblue.DialogSystem
 
         private Dictionary<string, Character> _characters = new Dictionary<string, Character>(5);
 
+#if UNITY_EDITOR
+        public void Serialize()
+        {
+            _characters.Clear();
+            for (int i = 0; i < _charactersData.Length; i++)
+            {
+                _characters.Add(_charactersData[i].CharacterID, _charactersData[i]);
+            }
+        }
+#endif
+
         public Character GetCharacter(string id)
         {
             if (_characters.TryGetValue(id, out var character))
@@ -28,17 +42,16 @@ namespace Deblue.DialogSystem
             throw new System.Exception(string.Format("Character id {0} didn't register.", id));
         }
 
+#if !UNITY_EDITOR
         public void OnBeforeSerialize()
         {
-            for (int i = 0; i < _charactersData.Length; i++)
-            {
-                _characters.Add(_charactersData[i].CharacterID, _charactersData[i]);
-            }
+            Serialize();
         }
 
         public void OnAfterDeserialize()
         {
             _characters.Clear();
         }
+#endif
     }
 }

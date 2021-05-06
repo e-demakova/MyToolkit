@@ -11,6 +11,7 @@ namespace Deblue.DialogSystem
 
         private static DialogSwitcherEvents _events = new DialogSwitcherEvents();
         private static DialogSO             _currentDialog;
+        private static Character            _currentCharacter;
         private static IChoiceReciver       _choiceReciver;
 
         public void Init(IChoiceReciver choiceReciver)
@@ -18,10 +19,11 @@ namespace Deblue.DialogSystem
             _choiceReciver = choiceReciver;
         }
 
-        public void StartDialog(DialogSO dialog)
+        public void StartDialog(DialogSO dialog, Character character)
         {
             _currentDialog = dialog;
-            _events.Raise(new Dialog_Start(dialog));
+            _events.Raise(new Dialog_Start(dialog, character));
+            _currentCharacter = character;
             _currentDialog.Init();
             IsInDialg = true;
             SwitchReplica();
@@ -29,7 +31,7 @@ namespace Deblue.DialogSystem
 
         public void CloseCurrentDialog()
         {
-            _events.Raise(new Dialog_End(_currentDialog));
+            _events.Raise(new Dialog_End(_currentDialog, _currentCharacter));
             IsInDialg = false;
             _currentDialog = null;
         }
@@ -73,6 +75,11 @@ namespace Deblue.DialogSystem
         public void OnChoiceMade(Choice choice)
         {
             _events.Raise(new Dialog_Choice_Maded(choice));
+            var requiredItem = choice.ItemID;
+            if (string.IsNullOrEmpty(requiredItem))
+            {
+                _events.Raise(new Player_Give_Item(_currentCharacter, requiredItem));
+            }
         }
     }
 
@@ -82,11 +89,13 @@ namespace Deblue.DialogSystem
         IObserver SubscribeOnDialogEnd(Action<Dialog_End> action, List<IObserver> observers = null);
         IObserver SubscribeOnReplicaSwitch(Action<Replica_Switch> action, List<IObserver> observers = null);
         IObserver SubscribeOnGiveChoice(Action<Dialog_Give_Choice> action, List<IObserver> observers = null);
+        IObserver SubscribeOnPlayerGiveItem(Action<Player_Give_Item> action, List<IObserver> observers = null);
 
         void UnsubscribeOnDialogStart(Action<Dialog_Start> action);
         void UnsubscribeOnDialogEnd(Action<Dialog_End> action);
         void UnsubscribeOnReplicaSwitch(Action<Replica_Switch> action);
         void UnsubscribeOnGiveChoice(Action<Dialog_Give_Choice> action);
+        void UnsubscribeOnPlayerGiveItem(Action<Player_Give_Item> action);
     }
 
     public class DialogSwitcherEvents : EventSender, IDialogSwitcherEvents
@@ -111,6 +120,11 @@ namespace Deblue.DialogSystem
         {
             return Subscribe(action, observers);
         }
+        
+        public IObserver SubscribeOnPlayerGiveItem(Action<Player_Give_Item> action, List<IObserver> observers = null)
+        {
+            return Subscribe(action, observers);
+        }
         #endregion
 
         #region Unsubscribing
@@ -130,6 +144,11 @@ namespace Deblue.DialogSystem
         }
         
         public void UnsubscribeOnGiveChoice(Action<Dialog_Give_Choice> action)
+        {
+            Unsubscribe(action);
+        }
+        
+        public void UnsubscribeOnPlayerGiveItem(Action<Player_Give_Item> action)
         {
             Unsubscribe(action);
         }

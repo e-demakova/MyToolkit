@@ -3,7 +3,7 @@
     [System.Serializable]
     public class ObservInt : ObservLimitProperty<int>
     {
-        public static explicit operator int(ObservInt i) => i.Value;
+        public static implicit operator int(ObservInt i) => i.Value;
         public static explicit operator float(ObservInt i) => i.Value;
 
         public static ObservInt operator ++(ObservInt a)

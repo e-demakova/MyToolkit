@@ -14,26 +14,6 @@ namespace Deblue.DialogSystem
         public EmotionId Emotion => _emotion;
     }
 
-    [System.Serializable]
-    public class Choice
-    {
-        public bool IsAvalible;
-
-        [SerializeField] private string   _answerId;
-        [SerializeField] private DialogSO _nextDialogue;
-
-        public string Response => _answerId;
-        public DialogSO NextDialogue => _nextDialogue;
-    }
-
-    [System.Serializable]
-    public class GiveItemChoise : Choice
-    {
-        [SerializeField] private string _itemId;
-
-        public string ItemID;
-    }
-
     public enum EmotionId
     {
         Normal,

@@ -9,6 +9,7 @@
 
     public interface ITakebleObject
     {
+        string Id { get; }
         bool CanPut { get; }
 
         bool CanTake { get; }
@@ -27,5 +28,6 @@
         TakebleObject Take();
 
         void Return();
+        bool TryReturn(ICanTakeObject taker);
     }
 }

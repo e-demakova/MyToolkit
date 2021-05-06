@@ -39,7 +39,7 @@ namespace Deblue.InputSystem
             _mouseHandlers.Raise(mousePosition);
         }
 
-        private void OnDisable()
+        private void OnDestroy()
         {
             for (int i = 0; i < _inputHandlers.Count; i++)
             {
@@ -48,17 +48,17 @@ namespace Deblue.InputSystem
             _axisHandlers.Clear();
         }
 
-        public static void SubscribeOnInputAxis(Action<Vector2> action)
+        public static void SubscribeOnInputAxis(Action<Vector2> action, List<IObserver> observers = null)
         {
-            _axisHandlers.Subscribe(action);
+            _axisHandlers.Subscribe(action, observers);
         }
 
-        public static void SubscribeOnMousePosition(Action<Vector2> action)
+        public static void SubscribeOnMousePosition(Action<Vector2> action, List<IObserver> observers = null)
         {
-            _mouseHandlers.Subscribe(action);
+            _mouseHandlers.Subscribe(action, observers);
         }
 
-        public static void SubscribeOnInput<T>(Action<T> action, KeyCode keyCode) where T : struct
+        public static void SubscribeOnInput<T>(Action<T> action, KeyCode keyCode, List<IObserver> observers = null) where T : struct
         {
             if (!_handlers.TryGetValue(keyCode, out var handler))
             {
@@ -66,7 +66,7 @@ namespace Deblue.InputSystem
                 _handlers.Add(keyCode, handler);
                 _inputHandlers.Add(handler);
             }
-            handler.Subscribe(action);
+            handler.Subscribe(action, observers);
         }
 
         public static void UnsubscribeOnInputAxis(Action<Vector2> action)

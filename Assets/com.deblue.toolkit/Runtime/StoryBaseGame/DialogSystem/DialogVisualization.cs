@@ -8,7 +8,7 @@ namespace Deblue.DialogSystem
 {
     [DefaultExecutionOrder(-900)]
     [RequireComponent(typeof(Animator))]
-    public class DialogVisualization : MonoBehaviour
+    public class DialogVisualization : UniqMono<DialogVisualization>
     {
         [SerializeField] private TextMeshProUGUI  _dialogText;
         [SerializeField] private Image            _character;
@@ -17,9 +17,12 @@ namespace Deblue.DialogSystem
         private Animator   _animator;
         private static int _isOpen = Animator.StringToHash("IsOpen");
 
-        private void Awake()
+        protected override void MyAwake()
         {
             _animator = GetComponent<Animator>();
+#if UNITY_EDITOR
+            _charactersData.Serialize();
+#endif
         }
 
         private void OnEnable()

@@ -13,7 +13,7 @@ namespace Deblue.Interactive
             public Sprite Highlight;
         }
 
-        protected abstract bool CanHighlight { get; }
+        public abstract bool CanHighlight { get; }
 
         public SpriteRenderer Renderer { get; private set; }
         public int DefoultSortOrder { get; private set; }
@@ -59,6 +59,9 @@ namespace Deblue.Interactive
 
     public abstract class TakebleObject : InteractiveObject, ITakebleObject
     {
+        [SerializeField] private string _id;
+
+        public string Id => _id;
         public abstract bool CanPut { get; }
         public abstract bool CanTake { get; }
 
@@ -82,6 +85,7 @@ namespace Deblue.Interactive
         public abstract bool CanTake { get; }
 
         public abstract TakebleObject Take();
+        public abstract bool TryReturn(ICanTakeObject taker);
         public abstract void Return();
     }
 }

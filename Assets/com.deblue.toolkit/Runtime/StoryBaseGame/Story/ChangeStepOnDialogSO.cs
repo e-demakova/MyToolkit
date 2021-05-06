@@ -1,7 +1,6 @@
 ﻿using UnityEngine;
 
 using Deblue.DialogSystem;
-using Deblue.Interactive;
 
 namespace Deblue.Story
 {
@@ -15,32 +14,17 @@ namespace Deblue.Story
             DialogSwitcher.Events.SubscribeOnDialogStart(OnDone);
         }
 
-        protected override void DeInit()
+        protected override void MyDeInit()
         {
             DialogSwitcher.Events.UnsubscribeOnDialogStart(OnDone);
         }
 
         private void OnDone(Dialog_Start context)
         {
-            if (context.Dialog.CharacterId == _targetCharacterId)
+            if (context.Character.CharacterId == _targetCharacterId)
             {
                 OnDone();
             }
-        }
-    }
-    
-    [CreateAssetMenu(fileName = "ChangeStepCondition_StartDialog", menuName = "Story/Change Step Conditions/Start Dialog")]
-    public class ChangeStepOnGiveItemSO : ChangeStepConditionSO
-    {
-        [SerializeField] private string _targetCharacterId;
-        [SerializeField] private string _itemId;
-
-        protected override void MyInit()
-        {
-        }
-
-        protected override void DeInit()
-        {
         }
     }
 }

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Deblue.ObservingSystem
 {
     [RequireComponent(typeof(Collider2D))]
-    public class Trigger : MonoBehaviour
+    public class Trigger2D : MonoBehaviour
     {
         [SerializeField] private LayerMask  _layers = default;
 
@@ -38,9 +38,9 @@ namespace Deblue.ObservingSystem
             }
         }
 
-        public void SubscribeOnTrigger(Action<Trigger_React> action)
+        public IObserver SubscribeOnTrigger(Action<Trigger_React> action, List<IObserver> observers = null)
         {
-            _triggerEnter.Subscribe(action);
+            return _triggerEnter.Subscribe(action, observers);
         }
         
         public void UnsubscribeOnTrigger(Action<Trigger_React> action)
@@ -48,13 +48,14 @@ namespace Deblue.ObservingSystem
             _triggerEnter.Unsubscribe(action);
         }
 
-        public void SubscribeOnTrigger<T>(Action<Trigger_Component_React> action) where T : Component
+        public IObserver SubscribeOnTrigger<T>(Action<Trigger_Component_React> action, List<IObserver> observers = null) where T : Component
         {
             if (!_handlers.TryGetValue(typeof(T), out var handler))
             {
-                _handlers.Add(typeof(T), new Handler<Trigger_Component_React>());
+                handler = new Handler<Trigger_Component_React>();
+                _handlers.Add(typeof(T), handler);
             }
-            handler.Subscribe(action);
+            return handler.Subscribe(action, observers);
         }
 
         public void UnsubscribeOnTrigger<T>(Action<Trigger_Component_React> action) where T : Component

@@ -17,6 +17,7 @@ namespace Deblue.Story
         public void Init(DialogRequester dialogRequester)
         {
             _dialogRequester = dialogRequester;
+            _dialogRequester.SetAvalibleDialogues(_currentStep.AvalibleCharacters);
         }
 
         protected override void MyAwake()
@@ -43,7 +44,7 @@ namespace Deblue.Story
 
         private void OnStepChange()
         {
-            _dialogRequester.
+            _dialogRequester.SetAvalibleDialogues(_currentStep.AvalibleCharacters);
             _currentStep = _currentStep.NextStep;
         }
     }

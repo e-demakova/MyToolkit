@@ -5,14 +5,10 @@ namespace Deblue.Story
     [CreateAssetMenu(fileName = "ChangeStepCondition_Empty", menuName = "Story/Change Step Conditions/Empty")]
     public class ChangeStepConditionSO : ScriptableObject
     {
-        [SerializeField] private StepSO _nextLine;
-
-        public StepSO NextLine => _nextLine;
-        public bool   IsDone { get; private set; }
+        [System.NonSerialized] public bool IsDone;
 
         public void Init()
         {
-            IsDone = false;
             MyInit();
         }
 
@@ -20,7 +16,12 @@ namespace Deblue.Story
         {
         }
 
-        protected virtual void DeInit()
+        public void DeInit()
+        {
+            IsDone = false;
+        }
+
+        protected virtual void MyDeInit()
         {
         }
 
@@ -31,7 +32,6 @@ namespace Deblue.Story
         protected void OnDone()
         {
             IsDone = true;
-            DeInit();
         }
     }
 }

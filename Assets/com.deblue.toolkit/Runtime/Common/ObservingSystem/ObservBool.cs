@@ -3,13 +3,7 @@
     [System.Serializable]
     public class ObservBool : ObservProperty<bool>
     {
-        public ObservBool(bool value) : base(value)
-        {
-        }
-        
-        public ObservBool() : base(false)
-        {
-        }
+        public static implicit operator bool(ObservBool i) => i.Value;
 
         public static bool operator ==(ObservBool a, bool b) => (a.Value == b);
         public static bool operator !=(ObservBool a, bool b) => (a.Value != b);
@@ -26,6 +20,14 @@
         {
             int hashCode = _value.GetHashCode();
             return hashCode;
+        }
+
+        public ObservBool(bool value) : base(value)
+        {
+        }
+        
+        public ObservBool() : base(false)
+        {
         }
     }
 }

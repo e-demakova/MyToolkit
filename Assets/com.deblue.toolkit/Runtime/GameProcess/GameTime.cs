@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -30,9 +31,9 @@ namespace Deblue.GameProcess
             }
         }
 
-        public static IObserver SubscribeOnPause(Action<Game_Pause_Change> action)
+        public static IObserver SubscribeOnPause(Action<Game_Pause_Change> action, List<IObserver> observers = null)
         {
-            return _pauseHandlers.Subscribe(action);
+            return _pauseHandlers.Subscribe(action, observers);
         }
 
         public static void UnsubscribeOnPause(Action<Game_Pause_Change> action)
