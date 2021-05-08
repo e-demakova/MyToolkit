@@ -60,6 +60,10 @@
         public static bool operator ==(ObservInt a, ObservInt b) => (a.Value == b.Value);
         public static bool operator !=(ObservInt a, ObservInt b) => (a.Value != b.Value);
 
+        public ObservInt() : base(0, int.MinValue, int.MaxValue)
+        {
+        }
+
         public ObservInt(int loverLimit, int upperLimit) : base(loverLimit, upperLimit)
         {
         }

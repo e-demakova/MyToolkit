@@ -4,23 +4,15 @@ using Deblue.ObservingSystem;
 
 namespace Deblue.DialogSystem
 {
-    public readonly struct Player_Near_On_Character
+    public readonly struct Dialog_Trigger
     {
         public readonly Character Character;
+        public readonly bool      IsEnter;
 
-        public Player_Near_On_Character(Character character)
+        public Dialog_Trigger(Character character, bool isEnter)
         {
             Character = character;
-        }
-    }
-
-    public readonly struct Player_Exit_On_Character
-    {
-        public readonly Character Character;
-
-        public Player_Exit_On_Character(Character character)
-        {
-            Character = character;
+            IsEnter = isEnter;
         }
     }
 
@@ -36,31 +28,33 @@ namespace Deblue.DialogSystem
         }
     }
 
+    public interface IDialogStarter
+    {
+    }
+
     [RequireComponent(typeof(Collider2D))]
     public class Character : MonoBehaviour
     {
-        [SerializeField] private string    _characterId;
+        [SerializeField] private string _characterId;
 
-        private Handler<Player_Near_On_Character> _playerTalk = new Handler<Player_Near_On_Character>();
-        private Handler<Player_Exit_On_Character> _playerExit = new Handler<Player_Exit_On_Character>();
+        private Handler<Dialog_Trigger> _playerTalk = new Handler<Dialog_Trigger>();
 
-        public IReadOnlyHandler<Player_Near_On_Character> PlayerTalk => _playerTalk;
-        public IReadOnlyHandler<Player_Exit_On_Character> PlayerExit => _playerExit;
+        public IReadOnlyHandler<Dialog_Trigger> PlayerTalk => _playerTalk;
         public string CharacterId => _characterId;
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (other.TryGetComponent<Player>(out var player))
+            if (other.TryGetComponent<IDialogStarter>(out var dialogStarter))
             {
-                _playerTalk.Raise(new Player_Near_On_Character(this));
+                _playerTalk.Raise(new Dialog_Trigger(this, true));
             }
         }
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (other.TryGetComponent<Player>(out var player))
+            if (other.TryGetComponent<IDialogStarter>(out var dialogStarter))
             {
-                _playerExit.Raise(new Player_Exit_On_Character(this));
+                _playerTalk.Raise(new Dialog_Trigger(this, false));
             }
         }
     }

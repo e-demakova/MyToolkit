@@ -1,33 +1,39 @@
 ﻿namespace Deblue.Interactive
 {
-    public interface IReactionObject
+    public interface IInteractObject
     {
-        bool CanReact { get; }
-
-        void React();
+        bool CanHighlight(IObjectTaker taker);
+        bool TryHighlight(IObjectTaker taker);
+        void Highlight();
+        void StopHighlight();
     }
 
-    public interface ITakebleObject
+    public interface IReactionObject : IInteractObject
+    {
+        bool CanReact(IObjectTaker taker);
+        bool TryReact(IObjectTaker taker);
+        void React(IObjectTaker taker);
+    }
+
+    public interface ITakebleObject : IInteractObject
     {
         string Id { get; }
         bool CanPut { get; }
 
-        bool CanTake { get; }
+        bool IsCanBeTaken { get; }
 
         TakebleObject Take();
 
         void Put();
     }
 
-    public interface ITakebleObjectContainer
+    public interface ITakebleObjectContainer : IInteractObject
     {
-        bool CanReturn { get; }
-
-        bool CanTake { get; }
-
+        bool CanTake(IObjectTaker taker);
+        bool TryTake(IObjectTaker taker, out TakebleObject obj);
         TakebleObject Take();
 
-        void Return();
-        bool TryReturn(ICanTakeObject taker);
+        bool CanReturn(string objId);
+        void Return(TakebleObject obj);
     }
 }

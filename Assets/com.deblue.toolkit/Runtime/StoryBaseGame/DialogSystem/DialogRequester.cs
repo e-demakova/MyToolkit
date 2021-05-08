@@ -66,8 +66,19 @@ namespace Deblue.DialogSystem
                     if (character.CharacterId == characterInScene.CharacterId)
                     {
                         _dialogues.Add(characterInScene, character.Dialog);
-                        characterInScene.PlayerTalk.Subscribe(SetCharacter, _observCharacters);
-                        characterInScene.PlayerExit.Subscribe(context => _currentCharacter = null, _observCharacters);
+
+                        characterInScene.PlayerTalk.Subscribe(context =>
+                        {
+                            if (context.IsEnter)
+                            {
+                                SetCharacter(context.Character);
+                            }
+                            else
+                            {
+                                _currentCharacter = null;
+                            }
+                        }, _observCharacters);
+
                         break;
                     }
                 }
@@ -76,7 +87,7 @@ namespace Deblue.DialogSystem
 
         private void RequestDialog(On_Button_Down context)
         {
-            if(_currentCharacter == null)
+            if (_currentCharacter == null)
             {
                 return;
             }
@@ -86,9 +97,9 @@ namespace Deblue.DialogSystem
             }
         }
 
-        private void SetCharacter(Player_Near_On_Character context)
+        private void SetCharacter(Character character)
         {
-            _currentCharacter = context.Character;
+            _currentCharacter = character;
         }
 
         private void UpdateCharactersOnNewScene()

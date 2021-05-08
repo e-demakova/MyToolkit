@@ -22,7 +22,6 @@ namespace Deblue.DialogSystem
 
         private Dictionary<string, Character> _characters = new Dictionary<string, Character>(5);
 
-#if UNITY_EDITOR
         public void Serialize()
         {
             _characters.Clear();
@@ -31,7 +30,6 @@ namespace Deblue.DialogSystem
                 _characters.Add(_charactersData[i].CharacterID, _charactersData[i]);
             }
         }
-#endif
 
         public Character GetCharacter(string id)
         {
