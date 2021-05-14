@@ -3,11 +3,11 @@ using UnityEngine.UI;
 
 using TMPro;
 
-using Deblue.UiView;
+using Deblue.UiViews;
 
 namespace Deblue.Achivments
 {
-    public class AchivmentView :  ViewPresenter<AchivmentModel>
+    public class AchivmentView :  ModelView<AchivmentModel>
     {
         [SerializeField] private Animator _animator;
         [SerializeField] private Image _icon;
@@ -16,7 +16,7 @@ namespace Deblue.Achivments
 
         private static int UnlockTrigger = Animator.StringToHash("Unlock");
 
-        protected override void Init()
+        protected override void MyInit()
         {
             //TODO: Подписаться на анлок атчивок.
         }
@@ -35,12 +35,13 @@ namespace Deblue.Achivments
 
         public override void Show()
         {
-            base.Show();
+            //TODO: Добавить анимацию через DOTween.
+            gameObject.SetActive(true);
         }
 
         public override void Hide()
         {
-            base.Hide();
+            gameObject.SetActive(false);
         }
     }
 

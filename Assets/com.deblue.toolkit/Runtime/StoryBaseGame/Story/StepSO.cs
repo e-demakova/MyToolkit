@@ -14,13 +14,30 @@ namespace Deblue.Story
             public StepSO                NextStep;
         }
 
-        public Condition[]               Conditions;
-        public AvalibleCharacterOnStep[] AvalibleCharacters;
+        public Condition[]            Conditions;
+        public AvalibleDialogOnStep[] AvalibleCharacters;
 
         [SerializeField, HideInInspector] private StepSO _nextStep;
 
         public bool IsDone { get; private set; }
         public StepSO NextStep => _nextStep;
+
+        public void Init()
+        {
+            for (int i = 0; i < Conditions.Length; i++)
+            {
+                Conditions[i].StepCondition.Init();
+            }
+        }
+        
+        public void DeInit()
+        {
+            IsDone = false;
+            for (int j = 0; j < Conditions.Length; j++)
+            {
+                Conditions[j].StepCondition.DeInit();
+            }
+        }
 
         public void Execute(float deltaTime)
         {
@@ -31,10 +48,6 @@ namespace Deblue.Story
                 {
                     IsDone = true;
                     _nextStep = Conditions[i].NextStep;
-                    for (int j = 0; j < Conditions.Length; j++)
-                    {
-                        Conditions[j].StepCondition.DeInit();
-                    }
                     return;
                 }
             }

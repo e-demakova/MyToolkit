@@ -19,6 +19,7 @@ namespace Deblue.Story
         public void DeInit()
         {
             IsDone = false;
+            MyDeInit();
         }
 
         protected virtual void MyDeInit()

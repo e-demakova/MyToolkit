@@ -5,13 +5,13 @@ using UnityEngine;
 
 using Deblue.Models;
 
-namespace Deblue.UiView
+namespace Deblue.UiViews
 {
     class UiVisualizator : MonoBehaviour
     {
-        [SerializeField] private BaseViewPresenter[] _viewsPresenters;
+        [SerializeField] private IModelView[] _viewsPresenters;
 
-        private Dictionary<Type, IViewPresenter> _views = new Dictionary<Type, IViewPresenter>();
+        private Dictionary<Type, IView> _views = new Dictionary<Type, IView>();
 
         public void InitView<T>(T model) where T : IModel
         {

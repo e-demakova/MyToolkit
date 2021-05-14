@@ -2,6 +2,6 @@
 {
     public interface IChoiceReciver
     {
-        bool ChoiceAvalile(Choice choice);
+        bool CheckChoiceAvalible(Choice choice);
     }
 }

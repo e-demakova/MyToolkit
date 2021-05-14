@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using Deblue.ObservingSystem;
-using Deblue.UiView;
+using Deblue.UiViews;
 
 namespace Deblue.Stats
 {
-    public class PlayerStatsViewPresenter<TEnum> : ViewPresenter<StatsStorage<TEnum>> where TEnum : System.Enum
+    public class PlayerStatsViewPresenter<TEnum> : ModelView<StatsStorage<TEnum>> where TEnum : System.Enum
     {
         [SerializeField] private StatView<TEnum>[] _views;
 
         private Dictionary<TEnum, StatView<TEnum>> _statsViews = new Dictionary<TEnum, StatView<TEnum>>(5);
 
-        protected override void Init()
+        protected override void MyInit()
         {
             _model.StatsIds.SubscribeOnAdding(InitStatView);
             _model.StatsIds.SubscribeOnRemoving(DestroyStatView);
@@ -50,6 +50,16 @@ namespace Deblue.Stats
                 view.DeInit();
                 Destroy(view.gameObject);
             }
+        }
+
+        public override void Hide()
+        {
+            gameObject.SetActive(false);
+        }
+
+        public override void Show()
+        {
+            gameObject.SetActive(true);
         }
     }
 }

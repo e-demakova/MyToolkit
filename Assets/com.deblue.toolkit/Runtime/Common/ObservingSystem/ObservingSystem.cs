@@ -184,6 +184,17 @@ namespace Deblue.ObservingSystem
         }
     }
 
+    public static class ObserverHalper 
+    {
+        public static void ClearObservers(List<IObserver> observers)
+        {
+            for (int i = 0; i < observers.Count; i++)
+            {
+                observers[i].Dispose();
+            }
+        }
+    }
+
     public interface IObserver : IDisposable
     {
     }

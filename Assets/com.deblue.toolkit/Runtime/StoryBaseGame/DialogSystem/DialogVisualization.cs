@@ -1,8 +1,12 @@
-﻿using UnityEngine.UI;
+﻿using System.Collections.Generic;
+
+using UnityEngine.UI;
 using UnityEngine;
 
 using TMPro;
+
 using Deblue.Localization;
+using Deblue.ObservingSystem;
 
 namespace Deblue.DialogSystem
 {
@@ -10,12 +14,18 @@ namespace Deblue.DialogSystem
     [RequireComponent(typeof(Animator))]
     public class DialogVisualization : UniqMono<DialogVisualization>
     {
-        [SerializeField] private TextMeshProUGUI  _dialogText;
+        private static int _isOpen = Animator.StringToHash("IsOpen");
+
+        [SerializeField] private TextMeshProUGUI  _replica;
         [SerializeField] private Image            _character;
         [SerializeField] private CharactersDataSO _charactersData;
+        [SerializeField] private ChoiceView       _choicePrefab;
+        [SerializeField] private Transform        _choicesConteiner;
 
-        private Animator   _animator;
-        private static int _isOpen = Animator.StringToHash("IsOpen");
+        private DialogSwitcher   _switcher;
+        private Animator         _animator;
+        private List<ChoiceView> _choices = new List<ChoiceView>(4);
+        private List<IObserver>  _observers = new List<IObserver>(4);
 
         protected override void MyAwake()
         {
@@ -27,16 +37,20 @@ namespace Deblue.DialogSystem
 
         private void OnEnable()
         {
-            DialogSwitcher.Events.SubscribeOnReplicaSwitch(VisualizeNewReplica);
-            DialogSwitcher.Events.SubscribeOnDialogStart(OpenWindow);
-            DialogSwitcher.Events.SubscribeOnDialogEnd(CloseWindow);
+            DialogSwitcher.Events.SubscribeOnReplicaSwitch(VisualizeNewReplica, _observers);
+            DialogSwitcher.Events.SubscribeOnDialogStart(OpenWindow, _observers);
+            DialogSwitcher.Events.SubscribeOnDialogEnd(CloseWindow, _observers);
+            DialogSwitcher.Events.SubscribeOnGiveChoice(VisualizeChoice, _observers);
         }
 
         private void OnDisable()
         {
-            DialogSwitcher.Events.UnsubscribeOnReplicaSwitch(VisualizeNewReplica);
-            DialogSwitcher.Events.UnsubscribeOnDialogStart(OpenWindow);
-            DialogSwitcher.Events.UnsubscribeOnDialogEnd(CloseWindow);
+            ObserverHalper.ClearObservers(_observers);
+        }
+
+        public void Init(DialogSwitcher switcher)
+        {
+            _switcher = switcher;
         }
 
         private void CloseWindow(Dialog_End context)
@@ -51,9 +65,42 @@ namespace Deblue.DialogSystem
 
         private void VisualizeNewReplica(Replica_Switch context)
         {
-            _dialogText.text = Localizator.GetText(context.Replica.TextId);
+            _replica.text = Localizator.GetText(context.Replica.TextId);
             var data = _charactersData.GetCharacter(context.Replica.CharacterId);
             _character.sprite = data.Icon;
+        }
+
+        private void VisualizeChoice(Dialog_Give_Choice context)
+        {
+            _replica.text = Localizator.GetText(context.ChoiceTextId);
+
+            var choicesDelta = context.Choices.Length - _choices.Count;
+
+            for (int i = 0; i < choicesDelta; i++)
+            {
+                var newChoice = Instantiate(_choicePrefab, _choicesConteiner);
+                _choices.Add(newChoice);
+
+                newChoice.ChoiceMaded.Subscribe(x =>
+                {
+                    _switcher.OnChoiceMade(x.Choice);
+                    HideChoices();
+                },
+                _observers);
+            }
+            for (int i = 0; i < context.Choices.Length; i++)
+            {
+                _choices[i].SetChoice(context.Choices[i]);
+                _choices[i].Show();
+            }
+        }
+
+        private void HideChoices()
+        {
+            for (int i = 0; i < _choices.Count; i++)
+            {
+                _choices[i].Hide();
+            }
         }
     }
 }

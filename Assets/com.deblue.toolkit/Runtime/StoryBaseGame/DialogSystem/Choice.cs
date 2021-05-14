@@ -8,12 +8,13 @@ namespace Deblue.DialogSystem
         [System.NonSerialized] public bool IsAvalible;
 
         [SerializeField] private DialogSO _nextDialogue;
-        [SerializeField] private string   _answerId;
-        [SerializeField] private string   _blockReasonTextId;
+        [SerializeField] private string   _textId;
+        [SerializeField] private string   _blockedTextId;
         [SerializeField] private string   _itemId;
 
+        public string TextId => _textId;
         public string ItemID => _itemId;
-        public string Response => _answerId;
+        public string BlockedTextId => _blockedTextId;
         public DialogSO NextDialogue => _nextDialogue;
     }
 }

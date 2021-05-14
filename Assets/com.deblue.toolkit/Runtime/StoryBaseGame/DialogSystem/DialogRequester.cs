@@ -9,24 +9,25 @@ using Deblue.GameProcess;
 namespace Deblue.DialogSystem
 {
     [System.Serializable]
-    public class AvalibleCharacterOnStep
+    public class AvalibleDialogOnStep
     {
-        public string   CharacterId;
         public DialogSO Dialog;
-        public bool     IsImportant;
+        public DialogSO DefoultDialog;
+        public string   CharacterId;
 
-        [System.NonSerialized] public bool IsTalcked;
+        public bool IsHaveUniqDialog;
     }
 
     public class DialogRequester
     {
-        private DialogSwitcher                        _switcher;
-        private ObservDictionary<Character, DialogSO> _dialogues = new ObservDictionary<Character, DialogSO>();
-        private Character                             _currentCharacter;
-        private AvalibleCharacterOnStep[]             _avalibleCharacters;
-        private Character[]                           _charactersInScene;
-        private List<IObserver>                       _observCharacters = new List<IObserver>(5);
-        private List<IObserver>                       _observers = new List<IObserver>(5);
+        private ObservDictionary<Character, AvalibleDialogOnStep> _dialogues = new ObservDictionary<Character, AvalibleDialogOnStep>();
+
+        private AvalibleDialogOnStep[] _avalibleCharacters;
+        private DialogSwitcher         _switcher;
+        private Character              _currentCharacter;
+        private Character[]            _charactersInScene;
+        private List<IObserver>        _observCharacters = new List<IObserver>(5);
+        private List<IObserver>        _observers = new List<IObserver>(5);
 
         private bool _isPaused;
 
@@ -43,9 +44,18 @@ namespace Deblue.DialogSystem
             Unsubscribe(_observers);
         }
 
-        public void SetAvalibleDialogues(AvalibleCharacterOnStep[] avalibleCharacters)
+        public void SetAvalibleDialogues(AvalibleDialogOnStep[] dialogues)
         {
-            _avalibleCharacters = avalibleCharacters;
+#if UNITY_EDITOR
+            for (int i = 0; i < dialogues.Length; i++)
+            {
+                if (dialogues[i].Dialog != null)
+                {
+                    dialogues[i].IsHaveUniqDialog = true;
+                }
+            }
+#endif
+            _avalibleCharacters = dialogues;
             UpdateCharactersOnNewScene();
             UpdateAvalibleCharacters();
         }
@@ -56,16 +66,12 @@ namespace Deblue.DialogSystem
             for (int i = 0; i < _avalibleCharacters.Length; i++)
             {
                 var character = _avalibleCharacters[i];
-                if (character.IsTalcked)
-                {
-                    continue;
-                }
                 for (int j = 0; j < _charactersInScene.Length; j++)
                 {
                     var characterInScene = _charactersInScene[j];
                     if (character.CharacterId == characterInScene.CharacterId)
                     {
-                        _dialogues.Add(characterInScene, character.Dialog);
+                        _dialogues.Add(characterInScene, character);
 
                         characterInScene.PlayerTalk.Subscribe(context =>
                         {
@@ -93,7 +99,15 @@ namespace Deblue.DialogSystem
             }
             if (_dialogues.TryGetValue(_currentCharacter, out var dialog) && !_isPaused)
             {
-                _switcher.StartDialog(dialog, _currentCharacter);
+                if (dialog.IsHaveUniqDialog)
+                {
+                    _switcher.StartDialog(dialog.Dialog, _currentCharacter);
+                    dialog.IsHaveUniqDialog = false;
+                }
+                else
+                {
+                    _switcher.StartDialog(dialog.DefoultDialog, _currentCharacter);
+                }
             }
         }
 

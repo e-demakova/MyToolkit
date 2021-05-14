@@ -21,6 +21,10 @@ namespace Deblue.DialogSystem
 
         public void StartDialog(DialogSO dialog, Character character)
         {
+            if(dialog == null)
+            {
+                return;
+            }
             _currentDialog = dialog;
             _events.Raise(new Dialog_Start(dialog, character));
             _currentCharacter = character;
@@ -62,9 +66,9 @@ namespace Deblue.DialogSystem
                 var choices = _currentDialog.Choices;
                 for (int i = 0; i < choices.Length; i++)
                 {
-                    choices[i].IsAvalible = _choiceReciver.ChoiceAvalile(choices[i]);
+                    choices[i].IsAvalible = _choiceReciver.CheckChoiceAvalible(choices[i]);
                 }
-                _events.Raise(new Dialog_Give_Choice(choices));
+                _events.Raise(new Dialog_Give_Choice(choices, _currentDialog.ChoiceTextId));
             }
             else
             {
@@ -79,6 +83,14 @@ namespace Deblue.DialogSystem
             if (string.IsNullOrEmpty(requiredItem))
             {
                 _events.Raise(new Player_Give_Item(_currentCharacter, requiredItem));
+            }
+            if(choice.NextDialogue != null)
+            {
+                StartDialog(choice.NextDialogue, _currentCharacter);
+            }
+            else
+            {
+                CloseCurrentDialog();
             }
         }
     }

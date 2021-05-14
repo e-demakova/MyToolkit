@@ -13,10 +13,12 @@ namespace Deblue.DialogSystem
     public readonly struct Dialog_Give_Choice
     {
         public readonly Choice[] Choices;
+        public readonly string   ChoiceTextId;
 
-        public Dialog_Give_Choice(Choice[] choices)
+        public Dialog_Give_Choice(Choice[] choices, string choiceTextId)
         {
             Choices = choices;
+            ChoiceTextId = choiceTextId;
         }
     }
 
