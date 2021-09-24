@@ -1,13 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Deblue.Input;
 using Deblue.ObservingSystem;
 using UnityEngine;
 using Zenject;
+using Object = UnityEngine.Object;
 
 namespace Deblue.InteractiveObjects
 {
-    public class InteractObjectsSorter
+    public class InteractObjectsSorter : IDisposable
     {
         private readonly List<InteractItem> _objects = new List<InteractItem>(30);
         private readonly List<IObserver> _observers = new List<IObserver>(30);
@@ -32,36 +34,22 @@ namespace Deblue.InteractiveObjects
         }
 
         [Inject]
-        protected void Construct(InputReceiver inputReceiver)
+        protected void Construct(InputReceiver inputReceiver, IItemTaker taker)
         {
+            _taker = taker;
             _objects.AddRange(Object.FindObjectsOfType<InteractItem>());
 
             for (int i = 0; i < _objects.Count; i++)
             {
-                _objects[i].Updated.Subscribe(OnUpdate, _observers);
+                _objects[i].Updated.Subscribe(context => UpdateHighlight(), _observers);
             }
 
             inputReceiver.SubscribeOnInput<ButtonDown>(Interact, KeyCode.F, _observers);
         }
 
-        private void OnDestroy()
+        public void Dispose()
         {
-            for (int i = 0; i < _observers.Count; i++)
-            {
-                _observers[i].Dispose();
-            }
-
-            _observers.Clear();
-        }
-
-        public void Init(IItemTaker taker)
-        {
-            _taker = taker;
-        }
-
-        private void OnUpdate(InteractObjectUpdated context)
-        {
-            UpdateHighlight();
+            _observers.ClearObservers();
         }
 
         private void UpdateHighlight()

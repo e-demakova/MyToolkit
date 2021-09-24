@@ -1327,3 +1327,173 @@ AssetImportParameters requested are different than current active one (requested
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
   custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 415.711673 seconds.
+  path: Assets/Deblue/Stats
+  artifactKey: Guid(5a4236e779430fe4dba3efc59a69f57d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Stats using Guid(5a4236e779430fe4dba3efc59a69f57d) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '175105da70301c59fa41c1f0dc9dff50') in 0.006450 seconds 
+  Import took 0.011333 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 15.306638 seconds.
+  path: Assets/Deblue/Story/Steps
+  artifactKey: Guid(5499e93bc897a7a48964d8b24040a814) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/Steps using Guid(5499e93bc897a7a48964d8b24040a814) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a610d1809ad68b4697ea78ec18aab928') in 0.001881 seconds 
+  Import took 0.021771 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 7.634628 seconds.
+  path: Assets/Deblue/Story/DialogSystem/Replica.cs
+  artifactKey: Guid(d1867522957dd3744a9002e2bce38a00) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/Replica.cs using Guid(d1867522957dd3744a9002e2bce38a00) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '5e405879df49de0175628d7f8779b193') in 0.002334 seconds 
+  Import took 0.025397 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 1.247842 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogView.cs
+  artifactKey: Guid(9edc2dd47aecff045a00ba97d1cfc9a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogView.cs using Guid(9edc2dd47aecff045a00ba97d1cfc9a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '331053d903e90475e0a8acd5578039fb') in 0.001308 seconds 
+  Import took 0.123157 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.009916 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogView.cs
+  artifactKey: Guid(9edc2dd47aecff045a00ba97d1cfc9a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogView.cs using Guid(9edc2dd47aecff045a00ba97d1cfc9a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '331053d903e90475e0a8acd5578039fb') in 0.001747 seconds 
+  Import took 0.006167 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.502248 seconds.
+  path: Assets/Deblue/Story/DialogSystem/NextReplicaButton.cs
+  artifactKey: Guid(b4519742a9298e249b66c8e6b768f875) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/NextReplicaButton.cs using Guid(b4519742a9298e249b66c8e6b768f875) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '0f96358fed0c0c1065108c045024ea61') in 0.001389 seconds 
+  Import took 0.082258 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 2.343665 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogSwitcher.cs
+  artifactKey: Guid(b39124dd7d3871b4bb976e66f6858929) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogSwitcher.cs using Guid(b39124dd7d3871b4bb976e66f6858929) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '7dfb72e16085005c9d8e93c898053db9') in 0.001619 seconds 
+  Import took 0.140539 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.349825 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogRequester.cs
+  artifactKey: Guid(1827c6b8f66417943a4b87c2c8cbf36c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogRequester.cs using Guid(1827c6b8f66417943a4b87c2c8cbf36c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dabd942e13dfdbce5565f74e5b9bbbce') in 0.001711 seconds 
+  Import took 0.062313 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.595313 seconds.
+  path: Assets/Deblue/Story/DialogSystem/Choices
+  artifactKey: Guid(6f7c95f254baced4e8401cc4200c29c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/Choices using Guid(6f7c95f254baced4e8401cc4200c29c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '326b10b689d0d6f7ef60ddc0b135faee') in 0.001861 seconds 
+  Import took 0.005962 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000706 seconds.
+  path: Assets/Deblue/Story/DialogSystem/Choices
+  artifactKey: Guid(6f7c95f254baced4e8401cc4200c29c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/Choices using Guid(6f7c95f254baced4e8401cc4200c29c9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '326b10b689d0d6f7ef60ddc0b135faee') in 0.003112 seconds 
+  Import took 0.007659 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.550111 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogEvents.cs
+  artifactKey: Guid(9f2b7e7c032d2f640a838205ac98f761) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogEvents.cs using Guid(9f2b7e7c032d2f640a838205ac98f761) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'bd6043d93304a9002b339161796a44d9') in 0.001561 seconds 
+  Import took 0.051366 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 1.232352 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogSO.cs
+  artifactKey: Guid(d83b90c08395ada48ac481274eb64c03) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogSO.cs using Guid(d83b90c08395ada48ac481274eb64c03) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '68c75330b2502e86775356a535e9b5e0') in 0.002016 seconds 
+  Import took 0.006983 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 0.000669 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogSO.cs
+  artifactKey: Guid(d83b90c08395ada48ac481274eb64c03) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogSO.cs using Guid(d83b90c08395ada48ac481274eb64c03) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '68c75330b2502e86775356a535e9b5e0') in 0.001721 seconds 
+  Import took 0.006649 seconds .
+
+========================================================================
+Received Import Request.
+  Time since last request: 154.553847 seconds.
+  path: Assets/Deblue/Story/DialogSystem/DialogView.cs
+  artifactKey: Guid(9edc2dd47aecff045a00ba97d1cfc9a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Deblue/Story/DialogSystem/DialogView.cs using Guid(9edc2dd47aecff045a00ba97d1cfc9a4) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'd5539b8cdd3b4b1f4e811012c4e3b516') in 0.001462 seconds 
+  Import took 0.033140 seconds .
+
+========================================================================
+Received Prepare
+Registering precompiled user dll's ...
+Registered in 0.329412 seconds.
+Begin MonoManager ReloadAssembly
+Native extension for WindowsStandalone target not found
+Native extension for WebGL target not found
+Refreshing native plugins compatible for Editor in 1.65 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Mono: successfully reloaded assembly
+- Completed reload, in  3.105 seconds
+Domain Reload Profiling:
+	ReloadAssembly (3110ms)
+		BeginReloadAssembly (325ms)
+			ExecutionOrderSort (0ms)
+			DisableScriptedObjects (19ms)
+			BackupInstance (0ms)
+			ReleaseScriptingObjects (0ms)
+			CreateAndSetChildDomain (152ms)
+		EndReloadAssembly (2690ms)
+			LoadAssemblies (172ms)
+			RebuildTransferFunctionScriptingTraits (0ms)
+			SetupTypeCache (626ms)
+			ReleaseScriptCaches (6ms)
+			RebuildScriptCaches (84ms)
+			SetupLoadedEditorAssemblies (1614ms)
+				LogAssemblyErrors (0ms)
+				InitializePlatformSupportModulesInManaged (15ms)
+				SetLoadedEditorAssemblies (1ms)
+				RefreshPlugins (2ms)
+				BeforeProcessingInitializeOnLoad (144ms)
+				ProcessInitializeOnLoadAttributes (1421ms)
+				ProcessInitializeOnLoadMethodAttributes (17ms)
+				AfterProcessingInitializeOnLoad (14ms)
+				EditorAssembliesLoaded (0ms)
+			ExecutionOrderSort2 (0ms)
+			AwakeInstancesAfterBackupRestoration (17ms)
+Platform modules already initialized, skipping
+Refreshing native plugins compatible for Editor in 2.27 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 2154 Unused Serialized files (Serialized files now loaded: 0)
+System memory in use before: 190.4 MB.
+System memory in use after: 190.6 MB.
+
+Unloading 21 unused Assets to reduce memory usage. Loaded Objects now: 2721.
+Total: 10.451200 ms (FindLiveObjects: 0.677200 ms CreateObjectMapping: 0.456800 ms MarkObjects: 9.229700 ms  DeleteObjects: 0.083800 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file

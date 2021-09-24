@@ -36,6 +36,29 @@ namespace Deblue.Story.DialogSystem
         }
     }
 
+    public class AutoScaledDialogView: ModelViewPresenter<DialogSwitcher>
+    {
+        public override void Hide()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Show()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void MyInit()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override void Dispose()
+        {
+            throw new NotImplementedException();
+        }
+    }
+    
     public class DialogView : ModelViewPresenter<DialogSwitcher>
     {
         [Header("Animation settings")]
