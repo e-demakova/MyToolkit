@@ -11,12 +11,13 @@ namespace Deblue.Stats
         where TEnum : Enum
     {
         private readonly Dictionary<TEnum, float> _statPercents = new Dictionary<TEnum, float>(15);
-        
+        private readonly List<IObserver> _observers = new List<IObserver>(10);
+
         public float GetStatPercent(TEnum id)
         {
             return _statPercents[id];
         }
-        
+
         public override void ChangeAmount(TEnum id, float delta)
         {
             var stat = GetStat(id);
@@ -51,6 +52,12 @@ namespace Deblue.Stats
         {
             var stat = GetStat(id);
             SetUpperLimit(id, stat, stat.Value + delta);
+        }
+
+        public void SubscribeUpperLimit(IReadonlyObservLimitProperty<float> maxStatValue, TEnum statId)
+        {
+            maxStatValue.PropertyChanged.Subscribe(context => SetUpperLimit(statId, context.NewValue), _observers);
+            SetUpperLimit(statId, maxStatValue.Value);
         }
 
         protected override void MyAddStatToEnumerators(TEnum id, ObservFloat stat)
@@ -107,6 +114,11 @@ namespace Deblue.Stats
         private void UpdateValue(ObservFloat stat, TEnum id)
         {
             stat.Value = CalculateValue(stat, _statPercents[id]);
+        }
+
+        protected override void MyDispose()
+        {
+            _observers.ClearObservers();
         }
     }
 }

@@ -1,12 +1,13 @@
-﻿using Deblue.ObservingSystem;
+﻿using System;
+using Deblue.ObservingSystem;
 using UnityEngine;
 
 namespace Deblue.Stats.View
 {
-    public abstract class BaseStatView : MonoBehaviour
+    public abstract class BaseStatView : MonoBehaviour, IDisposable
     {
         public abstract void Init(IReadonlyObservLimitProperty<float> statProperty);
-        public abstract void DeInit();
+        public abstract void Dispose();
         public abstract void UpdateView(LimitedPropertyChanged<float> context);
     }
 
@@ -20,15 +21,15 @@ namespace Deblue.Stats.View
         public sealed override void Init(IReadonlyObservLimitProperty<float> statProperty)
         {
             Stat = statProperty;
-            Stat.SubscribeOnChanging(UpdateView);
+            Stat.PropertyChanged.Subscribe(UpdateView);
             Init();
         }
 
         protected abstract void Init();
 
-        public sealed override void DeInit()
+        public sealed override void Dispose()
         {
-            Stat.UnsubscribeOnChanging(UpdateView);
+            Stat.PropertyChanged.Unsubscribe(UpdateView);
         }
     }
 }

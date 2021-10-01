@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Deblue.ObservingSystem
 {
-    public interface IHandlerContainer
+    public interface IHandlerContainer<T> : IReadOnlyHandler<T>
     {
         void Clear();
     }
@@ -15,7 +15,7 @@ namespace Deblue.ObservingSystem
         void Unsubscribe(Action<T> action);
     }
 
-    public class Handler<T> : IHandlerContainer, IReadOnlyHandler<T> where T : struct
+    public class Handler<T> : IHandlerContainer<T> where T : struct
     {
         private readonly HashSet<Action<T>> _actions = new HashSet<Action<T>>();
         private readonly List<Action<T>> _forRemoving = new List<Action<T>>(5);
@@ -127,53 +127,7 @@ namespace Deblue.ObservingSystem
             _forAdding.Clear();
         }
     }
-
-    public interface IEventSender
-    {
-        IObserver Subscribe<T>(Action<T> action, List<IObserver> observers = null) where T : struct;
-        void Unsubscribe<T>(Action<T> action) where T : struct;
-    }
-
-    public class EventSender : IEventSender
-    {
-        protected Dictionary<Type, IHandlerContainer> Handlers = new Dictionary<Type, IHandlerContainer>(10);
-
-        public IObserver Subscribe<T>(Action<T> action, List<IObserver> observers = null) where T : struct
-        {
-            if (!Handlers.TryGetValue(typeof(T), out var handler))
-            {
-                handler = new Handler<T>();
-                Handlers.Add(typeof(T), handler);
-            }
-
-            return (handler as Handler<T>).Subscribe(action, observers);
-        }
-
-        public void Unsubscribe<T>(Action<T> action) where T : struct
-        {
-            if (Handlers.TryGetValue(typeof(T), out var handler))
-            {
-                (handler as Handler<T>).Unsubscribe(action);
-            }
-        }
-
-        public void ClearSubscribers()
-        {
-            foreach (var handler in Handlers)
-            {
-                handler.Value.Clear();
-            }
-        }
-
-        public void Raise<T>(T argument) where T : struct
-        {
-            if (Handlers.TryGetValue(typeof(T), out var handler))
-            {
-                (handler as Handler<T>).Raise(argument);
-            }
-        }
-    }
-
+    
     public interface IObserver : IDisposable
     {
     }

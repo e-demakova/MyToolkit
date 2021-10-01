@@ -6,19 +6,25 @@ namespace Deblue.ObservingSystem
 {
     public interface IReadonlyObservDictionary<TKey, TValue>
     {
-        IObserver SubscribeOnAdding(Action<ValueAdded<TKey, TValue>> action, List<IObserver> observers = null);
-        IObserver SubscribeOnRemoving(Action<ValueRemoved<TKey, TValue>> action, List<IObserver> observers = null);
-        IObserver SubscribeOnChanging(Action<ValueChanged<TKey, TValue>> action, List<IObserver> observers = null);
-
-        void UnsubscribeOnAdding(Action<ValueAdded<TKey, TValue>> action);
-        void UnsubscribeOnRemoving(Action<ValueRemoved<TKey, TValue>> action);
-        void UnsubscribeOnChanging(Action<ValueChanged<TKey, TValue>> action);
+        IReadOnlyHandler<ValueAdded<TKey, TValue>> ValueAdded { get; }
+        IReadOnlyHandler<ValueRemoved<TKey, TValue>> ValueRemoved { get; }
+        IReadOnlyHandler<ValueChanged<TKey, TValue>> ValueChanged { get; }
     }
 
     [Serializable]
-    public class ObservDictionary<TKey, TValue> : EventSender, IReadonlyObservDictionary<TKey, TValue>, IDictionary<TKey, TValue>
+    public class ObservDictionary<TKey, TValue> : IReadonlyObservDictionary<TKey, TValue>, IDictionary<TKey, TValue>
     {
-        public ObservDictionary() : this(0) { }
+        private Handler<ValueAdded<TKey, TValue>> _valueAdded = new Handler<ValueAdded<TKey, TValue>>();
+        private Handler<ValueRemoved<TKey, TValue>> _valueRemoved = new Handler<ValueRemoved<TKey, TValue>>();
+        private Handler<ValueChanged<TKey, TValue>> _valueChanged = new Handler<ValueChanged<TKey, TValue>>();
+
+        public IReadOnlyHandler<ValueAdded<TKey, TValue>> ValueAdded => _valueAdded;
+        public IReadOnlyHandler<ValueRemoved<TKey, TValue>> ValueRemoved => _valueRemoved;
+        public IReadOnlyHandler<ValueChanged<TKey, TValue>> ValueChanged => _valueChanged;
+
+        public ObservDictionary() : this(0)
+        {
+        }
 
         public ObservDictionary(int capacity)
         {
@@ -37,29 +43,26 @@ namespace Deblue.ObservingSystem
 
         public TValue this[TKey key]
         {
-            get
-            {
-                return _dictionary[key];
-            }
+            get => _dictionary[key];
             set
             {
                 var oldValue = _dictionary[key];
                 _dictionary[key] = value;
-                Raise(new ValueChanged<TKey, TValue>(key, oldValue, value));
+                _valueChanged.Raise(new ValueChanged<TKey, TValue>(key, oldValue, value));
             }
         }
 
         public void Add(TKey key, TValue value)
         {
             _dictionary.Add(key, value);
-            Raise(new ValueAdded<TKey, TValue>(key, value));
+            _valueAdded.Raise(new ValueAdded<TKey, TValue>(key, value));
         }
 
         public bool Remove(TKey key)
         {
             var value = _dictionary[key];
             _dictionary.Remove(key);
-            Raise(new ValueRemoved<TKey, TValue>(key, value));
+            _valueRemoved.Raise(new ValueRemoved<TKey, TValue>(key, value));
             return true;
         }
 
@@ -72,10 +75,13 @@ namespace Deblue.ObservingSystem
         {
             foreach (var item in _dictionary)
             {
-                Raise(new ValueRemoved<TKey, TValue>(item.Key, item.Value));
+                _valueRemoved.Raise(new ValueRemoved<TKey, TValue>(item.Key, item.Value));
             }
+
             _dictionary.Clear();
-            ClearSubscribers();
+            _valueAdded.Clear();
+            _valueChanged.Clear();
+            _valueRemoved.Clear();
         }
 
         public bool ContainsKey(TKey key)
@@ -119,39 +125,5 @@ namespace Deblue.ObservingSystem
                 i++;
             }
         }
-
-        #region Subscribing
-        public IObserver SubscribeOnAdding(Action<ValueAdded<TKey, TValue>> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-
-        public IObserver SubscribeOnRemoving(Action<ValueRemoved<TKey, TValue>> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-
-        public IObserver SubscribeOnChanging(Action<ValueChanged<TKey, TValue>> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-        #endregion
-
-        #region Unsubscribing
-        public void UnsubscribeOnAdding(Action<ValueAdded<TKey, TValue>> action)
-        {
-            Unsubscribe(action);
-        }
-
-        public void UnsubscribeOnRemoving(Action<ValueRemoved<TKey, TValue>> action)
-        {
-            Unsubscribe(action);
-        }
-
-        public void UnsubscribeOnChanging(Action<ValueChanged<TKey, TValue>> action)
-        {
-            Unsubscribe(action);
-        }
-        #endregion
     }
 }

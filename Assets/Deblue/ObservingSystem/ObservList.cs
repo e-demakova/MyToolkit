@@ -1,27 +1,34 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using CodiceApp.EventTracking;
+using Unity.Collections.LowLevel.Unsafe;
 
 namespace Deblue.ObservingSystem
 {
-    public interface IReadonlyObservList<T>
+    public interface IReadonlyObservList<T> : IDisposable
     {
         int Count { get; }
         int Capacity { get; }
         public T this[int i] { get; }
-        
-        IObserver SubscribeOnAdding(Action<ValueAdded<int, T>> action, List<IObserver> observers = null);
-        IObserver SubscribeOnRemoving(Action<ValueRemoved<int, T>> action, List<IObserver> observers = null);
-        IObserver SubscribeOnChanging(Action<ValueChanged<int, T>> action, List<IObserver> observers = null);
 
-        void UnsubscribeOnAdding(Action<ValueAdded<int, T>> action);
-        void UnsubscribeOnRemoving(Action<ValueRemoved<int, T>> action);
-        void UnsubscribeOnChanging(Action<ValueChanged<int, T>> action);
+        IReadOnlyHandler<ValueAdded<int, T>> ValueAdded { get; }
+        IReadOnlyHandler<ValueRemoved<int, T>> ValueRemoved { get; }
+        IReadOnlyHandler<ValueChanged<int, T>> ValueChanged { get; }
     }
 
     [Serializable]
     public class ObservList<T> : EventSender, IReadonlyObservList<T>, IList<T>
     {
+        private Handler<ValueAdded<int, T>> _valueAdded = new Handler<ValueAdded<int, T>>();
+        private Handler<ValueRemoved<int, T>> _valueRemoved = new Handler<ValueRemoved<int, T>>();
+        private Handler<ValueChanged<int, T>> _valueChanged = new Handler<ValueChanged<int, T>>();
+
+        public IReadOnlyHandler<ValueAdded<int, T>> ValueAdded => _valueAdded;
+        public IReadOnlyHandler<ValueRemoved<int, T>> ValueRemoved => _valueRemoved;
+        public IReadOnlyHandler<ValueChanged<int, T>> ValueChanged => _valueChanged;
+
+
         public int Count => _list.Count;
         public int Capacity => _list.Capacity;
         public bool IsReadOnly => ((ICollection<T>) _list).IsReadOnly;
@@ -39,10 +46,10 @@ namespace Deblue.ObservingSystem
 
         public T this[int i]
         {
-            get { return _list[i]; }
+            get => _list[i];
             set
             {
-                Raise(new ValueChanged<int, T>(i, _list[i], value));
+                _valueChanged.Raise(new ValueChanged<int, T>(i, _list[i], value));
                 _list[i] = value;
             }
         }
@@ -50,27 +57,27 @@ namespace Deblue.ObservingSystem
         public void Add(T item)
         {
             _list.Add(item);
-            Raise(new ValueAdded<int, T>(_list.Count, item));
+            _valueAdded.Raise(new ValueAdded<int, T>(_list.Count, item));
         }
 
         public void Insert(int index, T item)
         {
             Insert(index, item);
-            Raise(new ValueAdded<int, T>(index, item));
+            _valueAdded.Raise(new ValueAdded<int, T>(index, item));
         }
 
         public void Remove(T item)
         {
             var index = _list.IndexOf(item);
             _list.Remove(item);
-            Raise(new ValueRemoved<int, T>(index, item));
+            _valueRemoved.Raise(new ValueRemoved<int, T>(index, item));
         }
 
         public void RemoveAt(int index)
         {
             var item = _list[index];
             _list.RemoveAt(index);
-            Raise(new ValueRemoved<int, T>(index, item));
+            _valueRemoved.Raise(new ValueRemoved<int, T>(index, item));
         }
 
         public int IndexOf(T item)
@@ -110,45 +117,14 @@ namespace Deblue.ObservingSystem
                 Remove(_list[i]);
             }
 
-            ClearSubscribers();
+            _valueAdded.Clear();
+            _valueChanged.Clear();
+            _valueRemoved.Clear();
         }
 
-        #region Subscribing
-
-        public IObserver SubscribeOnAdding(Action<ValueAdded<int, T>> action, List<IObserver> observers = null)
+        public void Dispose()
         {
-            return Subscribe(action, observers);
+            Clear();
         }
-
-        public IObserver SubscribeOnRemoving(Action<ValueRemoved<int, T>> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-
-        public IObserver SubscribeOnChanging(Action<ValueChanged<int, T>> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-
-        #endregion
-
-        #region Unsubscribing
-
-        public void UnsubscribeOnAdding(Action<ValueAdded<int, T>> action)
-        {
-            Unsubscribe(action);
-        }
-
-        public void UnsubscribeOnRemoving(Action<ValueRemoved<int, T>> action)
-        {
-            Unsubscribe(action);
-        }
-
-        public void UnsubscribeOnChanging(Action<ValueChanged<int, T>> action)
-        {
-            Unsubscribe(action);
-        }
-
-        #endregion
     }
 }

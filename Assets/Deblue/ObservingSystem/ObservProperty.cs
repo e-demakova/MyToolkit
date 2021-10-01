@@ -9,40 +9,21 @@ namespace Deblue.ObservingSystem
         T LowerLimit { get; }
         T UpperLimit { get; }
 
-        IObserver SubscribeOnChanging(Action<LimitedPropertyChanged<T>> action, List<IObserver> observers = null);
-        IObserver SubscribeOnLoverLimit(Action<PropertyReachedLowerLimit> action, List<IObserver> observers = null);
-        IObserver SubscribeOnUpperLimit(Action<PropertyReachedUpperLimit> action, List<IObserver> observers = null);
-
-        void UnsubscribeOnChanging(Action<LimitedPropertyChanged<T>> action);
-        void UnsubscribeOnLoverLimit(Action<PropertyReachedLowerLimit> action);
-        void UnsubscribeOnUpperLimit(Action<PropertyReachedUpperLimit> action);
+        IReadOnlyHandler<LimitedPropertyChanged<T>> PropertyChanged { get; }
+        IReadOnlyHandler<PropertyReachedUpperLimit> ReachedUpperLimit { get; }
+        IReadOnlyHandler<PropertyReachedLowerLimit> ReachedLowerLimit { get; }
     }
 
     public interface IReadonlyObservProperty<T> where T : IEquatable<T>
     {
         T Value { get; }
-
-        IObserver SubscribeOnChanging(Action<PropertyChanged<T>> action, List<IObserver> observers = null);
-        void UnsubscribeOnChanging(Action<PropertyChanged<T>> action);
-
-        public IObserver SubscribeOnSet(Action<PropertySet<T>> action, List<IObserver> observers = null);
-        void UnsubscribeOnSet(Action<PropertySet<T>> action);
+        IReadOnlyHandler<PropertyChanged<T>> PropertyChanged { get; }
+        IReadOnlyHandler<PropertySet<T>> PropertySetted { get; }
     }
 
-    public abstract class BaseObservProperty<T> : EventSender, IDisposable where T : IEquatable<T>
+    public abstract class BaseObservProperty<T> : IDisposable where T : IEquatable<T>
     {
         public abstract T Value { get; set; }
-
-        protected T _value;
-
-        public BaseObservProperty() : this(default(T))
-        {
-        }
-
-        public BaseObservProperty(T value)
-        {
-            _value = value;
-        }
 
         public override string ToString() => Value.ToString();
 
@@ -53,62 +34,51 @@ namespace Deblue.ObservingSystem
 
         public override int GetHashCode()
         {
-            return _value.GetHashCode();
+            return Value.GetHashCode();
         }
 
-        public void Dispose()
-        {
-            ClearSubscribers();
-        }
+        public abstract void Dispose();
     }
 
     public class ObservProperty<T> : BaseObservProperty<T>, IReadonlyObservProperty<T> where T : IEquatable<T>
     {
-        public ObservProperty() : this(default(T))
+        private T _value;
+
+        private readonly Handler<PropertyChanged<T>> _propertyChanged = new Handler<PropertyChanged<T>>();
+        private readonly Handler<PropertySet<T>> _propertySetted = new Handler<PropertySet<T>>();
+
+        public IReadOnlyHandler<PropertyChanged<T>> PropertyChanged => _propertyChanged;
+        public IReadOnlyHandler<PropertySet<T>> PropertySetted => _propertySetted;
+
+        public ObservProperty()
         {
         }
 
         public ObservProperty(T value)
         {
-            _value = value;
+            Value = value;
         }
 
-        public override sealed T Value
+        public sealed override T Value
         {
-            get
-            {
-                return _value;
-            }
+            get => _value;
             set
             {
                 if (!value.Equals(_value))
                 {
                     var oldValue = _value;
                     _value = value;
-                    Raise(new PropertyChanged<T>(_value, oldValue));
+                    _propertyChanged.Raise(new PropertyChanged<T>(_value, oldValue));
                 }
-                Raise(new PropertySet<T>(_value));
+
+                _propertySetted.Raise(new PropertySet<T>(_value));
             }
         }
 
-        public IObserver SubscribeOnChanging(Action<PropertyChanged<T>> action, List<IObserver> observers = null)
+        public override void Dispose()
         {
-            return Subscribe(action, observers);
-        }
-        
-        public IObserver SubscribeOnSet(Action<PropertySet<T>> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-
-        public void UnsubscribeOnChanging(Action<PropertyChanged<T>> action)
-        {
-            Unsubscribe(action);
-        }
-
-        public void UnsubscribeOnSet(Action<PropertySet<T>> action)
-        {
-            Unsubscribe(action);
+            _propertyChanged.Clear();
+            _propertySetted.Clear();
         }
     }
 
@@ -117,7 +87,16 @@ namespace Deblue.ObservingSystem
     {
         private T _lowerLimit;
         private T _upperLimit;
-        
+        private T _value;
+
+        private readonly Handler<LimitedPropertyChanged<T>> _propertyChanged = new Handler<LimitedPropertyChanged<T>>();
+        private readonly Handler<PropertyReachedUpperLimit> _reachedUpperLimit = new Handler<PropertyReachedUpperLimit>();
+        private readonly Handler<PropertyReachedLowerLimit> _reachedLowerLimit = new Handler<PropertyReachedLowerLimit>();
+
+        public IReadOnlyHandler<LimitedPropertyChanged<T>> PropertyChanged => _propertyChanged;
+        public IReadOnlyHandler<PropertyReachedUpperLimit> ReachedUpperLimit => _reachedUpperLimit;
+        public IReadOnlyHandler<PropertyReachedLowerLimit> ReachedLowerLimit => _reachedLowerLimit;
+
         public ObservLimitProperty(T loverLimit, T upperLimit) : this(default(T), loverLimit, upperLimit)
         {
         }
@@ -129,90 +108,55 @@ namespace Deblue.ObservingSystem
             _upperLimit = upperLimit;
         }
 
-        public override sealed T Value
+        public sealed override T Value
         {
-            get
-            {
-                return _value;
-            }
+            get => _value;
             set
             {
                 if (value.CompareTo(_lowerLimit) <= 0)
                 {
                     _value = _lowerLimit;
-                    Raise(new PropertyReachedLowerLimit());
+                    _reachedLowerLimit.Raise(new PropertyReachedLowerLimit());
                 }
                 else if (value.CompareTo(_upperLimit) >= 0)
                 {
                     _value = _upperLimit;
-                    Raise(new PropertyReachedUpperLimit());
+                    _reachedUpperLimit.Raise(new PropertyReachedUpperLimit());
                 }
                 else
                 {
                     _value = value;
                 }
-                Raise(new LimitedPropertyChanged<T>(_value, _lowerLimit, _upperLimit));
+
+                _propertyChanged.Raise(new LimitedPropertyChanged<T>(_value, _lowerLimit, _upperLimit));
             }
+        }
+
+        public override void Dispose()
+        {
+            _propertyChanged.Clear();
+            _reachedLowerLimit.Clear();
+            _reachedUpperLimit.Clear();
         }
 
         public T LowerLimit
         {
-            get
-            {
-                return _lowerLimit;
-            }
+            get => _lowerLimit;
             set
             {
                 _lowerLimit = value;
-                Raise(new LimitedPropertyChanged<T>(_value, _lowerLimit, _upperLimit));
+                _propertyChanged.Raise(new LimitedPropertyChanged<T>(_value, _lowerLimit, _upperLimit));
             }
         }
 
         public T UpperLimit
         {
-            get
-            {
-                return _upperLimit;
-            }
+            get => _upperLimit;
             set
             {
                 _upperLimit = value;
-                Raise(new LimitedPropertyChanged<T>(_value, _lowerLimit, _upperLimit));
+                _propertyChanged.Raise(new LimitedPropertyChanged<T>(_value, _lowerLimit, _upperLimit));
             }
         }
-
-        #region Subscribing
-        public IObserver SubscribeOnChanging(Action<LimitedPropertyChanged<T>> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-
-        public IObserver SubscribeOnLoverLimit(Action<PropertyReachedLowerLimit> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-
-        public IObserver SubscribeOnUpperLimit(Action<PropertyReachedUpperLimit> action, List<IObserver> observers = null)
-        {
-            return Subscribe(action, observers);
-        }
-        #endregion
-
-        #region Unsubscribing
-        public void UnsubscribeOnChanging(Action<LimitedPropertyChanged<T>> action)
-        {
-            Unsubscribe(action);
-        }
-
-        public void UnsubscribeOnLoverLimit(Action<PropertyReachedLowerLimit> action)
-        {
-            Unsubscribe(action);
-        }
-
-        public void UnsubscribeOnUpperLimit(Action<PropertyReachedUpperLimit> action)
-        {
-            Unsubscribe(action);
-        }
-        #endregion
     }
 }

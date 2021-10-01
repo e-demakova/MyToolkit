@@ -102,6 +102,20 @@ namespace Deblue.Stats
         {
             return _stats[id];
         }
+
+        public void Dispose()
+        {
+            _statsIds.Dispose();
+            foreach (var stat in _stats)
+            {
+                stat.Value.Dispose();
+            }
+            MyDispose();
+        }
+
+        protected virtual void MyDispose()
+        {
+        }
     }
 
     public class StatsStorage<TEnum> : BaseStatsStorage<TEnum> where TEnum : Enum

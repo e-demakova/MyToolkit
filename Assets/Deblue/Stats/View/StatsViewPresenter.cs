@@ -18,8 +18,8 @@ namespace Deblue.Stats.View
             {
                 InitStatView(Model.StatsIds[i]);
             }
-            Model.StatsIds.SubscribeOnAdding(context => InitStatView(context.Value), _observers);
-            Model.StatsIds.SubscribeOnRemoving(DestroyStatView, _observers);
+            Model.StatsIds.ValueAdded.Subscribe(context => InitStatView(context.Value), _observers);
+            Model.StatsIds.ValueRemoved.Subscribe(DestroyStatView, _observers);
         }
 
         public override void Dispose()
@@ -52,11 +52,11 @@ namespace Deblue.Stats.View
 
         private void DestroyStatView(ValueRemoved<int, TEnum> context)
         {
-            if (_statsViews.TryGetValue(context.Value, out var view))
-            {
-                view.DeInit();
-                Destroy(view.gameObject);
-            }
+            if (!_statsViews.TryGetValue(context.Value, out var view))
+                return;
+            
+            view.Dispose();
+            Destroy(view.gameObject);
         }
 
         public override void Hide()

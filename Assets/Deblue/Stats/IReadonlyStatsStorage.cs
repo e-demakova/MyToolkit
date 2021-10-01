@@ -8,7 +8,7 @@ namespace Deblue.Stats
         void DeInit();
     }
 
-    public interface IReadonlyStatsStorage<TEnum> : IStatsStorage where TEnum : Enum
+    public interface IReadonlyStatsStorage<TEnum> : IStatsStorage, IDisposable where TEnum : Enum
     {
         IReadonlyObservList<TEnum> StatsIds { get; }
 

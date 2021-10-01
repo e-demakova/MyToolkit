@@ -83,7 +83,7 @@
         public override int GetHashCode()
         {
             int hashCode = -169172844;
-            hashCode = hashCode * -1521134295 + _value.GetHashCode();
+            hashCode = hashCode * -1521134295 + Value.GetHashCode();
             hashCode = hashCode * -1521134295 + LowerLimit.GetHashCode();
             hashCode = hashCode * -1521134295 + UpperLimit.GetHashCode();
             return hashCode;

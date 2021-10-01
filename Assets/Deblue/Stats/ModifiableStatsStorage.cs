@@ -67,7 +67,7 @@ namespace Deblue.Stats
         }
     }
 
-    public class ModifiableStatsStorage<TEnum> : BaseStatsStorage<TEnum>, IStatsStorage<TEnum>, IModifiableStatsStorage<TEnum> where TEnum : Enum
+    public class ModifiableStatsStorage<TEnum> : BaseStatsStorage<TEnum>, IModifiableStatsStorage<TEnum> where TEnum : Enum
     {
         private readonly Dictionary<TEnum, float> _clearStats = new Dictionary<TEnum, float>(15);
         private readonly Dictionary<TEnum, HashSet<IStatModifier<TEnum>>> _firstOrderModifiers = new Dictionary<TEnum, HashSet<IStatModifier<TEnum>>>(15);

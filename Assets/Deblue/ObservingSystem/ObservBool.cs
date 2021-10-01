@@ -18,7 +18,7 @@
 
         public override int GetHashCode()
         {
-            int hashCode = _value.GetHashCode();
+            int hashCode = Value.GetHashCode();
             return hashCode;
         }
 

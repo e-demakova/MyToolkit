@@ -61,7 +61,7 @@ namespace Deblue.Stats.Tests
 
         public static void BindProperties(LimitStatBindings<TestModifiableStatId, TestLimitedStatId> bindings)
         {
-            LimitStatBindings<TestModifiableStatId, TestLimitedStatId>.SubscribeStatLimit(bindings, _observers);
+            LimitStatBindings<TestModifiableStatId, TestLimitedStatId>.SubscribeStatLimit(bindings);
         }
         
         private static ModifiableStatsStorage<TestModifiableStatId> ModifiableStatsStorage(int statsCount = 0, float value = 0)
