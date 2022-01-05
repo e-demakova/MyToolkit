@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using CodiceApp.EventTracking;
-using Unity.Collections.LowLevel.Unsafe;
 
 namespace Deblue.ObservingSystem
 {
@@ -18,7 +16,7 @@ namespace Deblue.ObservingSystem
     }
 
     [Serializable]
-    public class ObservList<T> : EventSender, IReadonlyObservList<T>, IList<T>
+    public class ObservList<T> : IReadonlyObservList<T>, IList<T>
     {
         private Handler<ValueAdded<int, T>> _valueAdded = new Handler<ValueAdded<int, T>>();
         private Handler<ValueRemoved<int, T>> _valueRemoved = new Handler<ValueRemoved<int, T>>();

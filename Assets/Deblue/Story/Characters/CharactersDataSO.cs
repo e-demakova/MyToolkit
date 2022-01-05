@@ -5,9 +5,6 @@ namespace Deblue.Story.Characters
 {
     [CreateAssetMenu(fileName = "CharactersData", menuName = "Story/Characters")]
     public class CharactersDataSO : ScriptableObject
-#if !UNITY_EDITOR
-        ,ISerializationCallbackReceiver
-#endif
     {
         [System.Serializable]
         public struct Character
